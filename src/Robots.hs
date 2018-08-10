@@ -3,6 +3,7 @@ module Robots
     , makeSimulation
     , step
     , totalPresentsDelivered
+    , runUntilTermination
     ) where
 
 import           Prelude hiding (Left, Right)
@@ -54,6 +55,10 @@ step (MkSim state)
 
 totalPresentsDelivered :: Simulation -> Integer
 totalPresentsDelivered = fromIntegral . length . getDeliveries . getState
+
+runUntilTermination :: Simulation -> Simulation
+runUntilTermination = until done step
+    where done = null . getMoves . getState
 
 move :: Robot -> Direction -> Robot
 move robot dir = let (x, y) = getRobot robot
