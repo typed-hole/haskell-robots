@@ -4,6 +4,8 @@ module Robots
     , step
     ) where
 
+import           Prelude hiding (Left, Right)
+
 data Direction
     = Up
     | Down
@@ -39,5 +41,13 @@ step (MkSim state)
     | null $ getMoves state = MkSim state
     | otherwise = let (m:ms) = getMoves state
                       (r:rs) = getRobots state
+                      r' = move r m
                    in MkSim state { getMoves = ms
-                                  , getRobots = rs ++ [r] }
+                                  , getRobots = rs ++ [r'] }
+
+move :: Robot -> Direction -> Robot
+move (MkRobot (x, y)) dir = MkRobot $ case dir of
+                                        Up    -> (x, y+1)
+                                        Down  -> (x, y-1)
+                                        Left  -> (x-1, y)
+                                        Right -> (x+1, y)
