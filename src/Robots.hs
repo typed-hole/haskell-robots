@@ -5,9 +5,11 @@ module Robots
     , totalPresentsDelivered
     , runUntilTermination
     , currentRobotPositions
+    , housesWithAtLeast
     ) where
 
-import           Prelude hiding (Left, Right)
+import           Data.List (group, sort)
+import           Prelude   hiding (Left, Right)
 
 data Direction
     = Up
@@ -22,7 +24,7 @@ newtype Robot
 
 newtype Delivery
     = MkDelivery { getLocation :: (Integer, Integer) }
-    deriving (Show, Eq)
+    deriving (Show, Eq, Ord)
 
 data SimState
     = SimState { getRobots     :: [Robot]
@@ -63,6 +65,12 @@ runUntilTermination = until done step
 
 currentRobotPositions :: Simulation -> [(Integer, Integer)]
 currentRobotPositions = fmap getRobot . getRobots . getState
+
+housesWithAtLeast :: Integer -> Simulation -> Integer
+housesWithAtLeast n sim = let groups = group . sort . getDeliveries . getState $ sim
+                              amounts = fmap (fromIntegral . length) groups
+                              atLeastN = filter (>= n) amounts
+                           in fromIntegral . length $ atLeastN
 
 move :: Robot -> Direction -> Robot
 move robot dir = let (x, y) = getRobot robot
