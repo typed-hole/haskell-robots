@@ -1,6 +1,7 @@
 module Robots
     ( Direction(..)
-    , simulate
+    , makeSimulation
+    , step
     ) where
 
 data Direction
@@ -28,6 +29,15 @@ newtype Simulation
     = MkSim SimState
     deriving (Show, Eq)
 
-simulate :: Int -> [Direction] -> Simulation
-simulate robots moves = let robs = replicate robots (MkRobot (0, 0))
+makeSimulation :: Int -> [Direction] -> Simulation
+makeSimulation robots moves = let robs = replicate robots (MkRobot (0, 0))
                          in MkSim $ SimState robs [] moves
+
+step :: Simulation -> Simulation
+step (MkSim state)
+    | null $ getRobots state = MkSim state
+    | null $ getMoves state = MkSim state
+    | otherwise = let (m:ms) = getMoves state
+                      (r:rs) = getRobots state
+                   in MkSim state { getMoves = ms
+                                  , getRobots = rs ++ [r] }
