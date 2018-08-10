@@ -2,6 +2,7 @@ module Robots
     ( Direction(..)
     , makeSimulation
     , step
+    , totalPresentsDelivered
     ) where
 
 import           Prelude hiding (Left, Right)
@@ -28,7 +29,7 @@ data SimState
                } deriving (Show, Eq)
 
 newtype Simulation
-    = MkSim SimState
+    = MkSim { getState :: SimState }
     deriving (Show, Eq)
 
 makeSimulation :: Int -> [Direction] -> Simulation
@@ -50,6 +51,9 @@ step (MkSim state)
                                              , getDeliveries = dels'
                                              , getRobots = rs ++ [r'] }
                    in newState
+
+totalPresentsDelivered :: Simulation -> Integer
+totalPresentsDelivered = fromIntegral . length . getDeliveries . getState
 
 move :: Robot -> Direction -> Robot
 move robot dir = let (x, y) = getRobot robot
