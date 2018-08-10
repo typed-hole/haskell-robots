@@ -1,5 +1,6 @@
 module Robots
     ( Direction(..)
+    , Simulation
     , makeSimulation
     , step
     , totalPresentsDelivered
