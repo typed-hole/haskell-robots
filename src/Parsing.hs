@@ -1,17 +1,11 @@
 module Parsing
-    ( Direction(..)
-    , parseDirectionString
+    ( parseDirectionString
     ) where
 
 import           Control.Monad.State
 import           Prelude             hiding (Left, Right)
 
-data Direction
-    = Up
-    | Down
-    | Left
-    | Right
-    deriving (Show, Eq)
+import           Robots
 
 parseDirectionString :: State String [Direction]
 parseDirectionString = do
