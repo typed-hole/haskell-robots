@@ -4,6 +4,7 @@ module Robots
     , step
     , totalPresentsDelivered
     , runUntilTermination
+    , currentRobotPositions
     ) where
 
 import           Prelude hiding (Left, Right)
@@ -59,6 +60,9 @@ totalPresentsDelivered = fromIntegral . length . getDeliveries . getState
 runUntilTermination :: Simulation -> Simulation
 runUntilTermination = until done step
     where done = null . getMoves . getState
+
+currentRobotPositions :: Simulation -> [(Integer, Integer)]
+currentRobotPositions = fmap getRobot . getRobots . getState
 
 move :: Robot -> Direction -> Robot
 move robot dir = let (x, y) = getRobot robot
