@@ -33,7 +33,7 @@ newtype Simulation
 
 makeSimulation :: Int -> [Direction] -> Simulation
 makeSimulation robots moves = let robs = replicate robots (MkRobot (0, 0))
-                         in MkSim $ SimState robs [] moves
+                               in MkSim $ SimState robs [] moves
 
 step :: Simulation -> Simulation
 step (MkSim state)
@@ -41,13 +41,20 @@ step (MkSim state)
     | null $ getMoves state = MkSim state
     | otherwise = let (m:ms) = getMoves state
                       (r:rs) = getRobots state
+                      dels = getDeliveries state
                       r' = move r m
-                   in MkSim state { getMoves = ms
-                                  , getRobots = rs ++ [r'] }
+                      dels' = if r' `notElem` rs
+                                then MkDelivery (getRobot r') : dels
+                                else dels
+                      newState = MkSim state { getMoves = ms
+                                             , getDeliveries = dels'
+                                             , getRobots = rs ++ [r'] }
+                   in newState
 
 move :: Robot -> Direction -> Robot
-move (MkRobot (x, y)) dir = MkRobot $ case dir of
-                                        Up    -> (x, y+1)
-                                        Down  -> (x, y-1)
-                                        Left  -> (x-1, y)
-                                        Right -> (x+1, y)
+move robot dir = let (x, y) = getRobot robot
+                  in MkRobot $ case dir of
+                                Up    -> (x, y+1)
+                                Down  -> (x, y-1)
+                                Left  -> (x-1, y)
+                                Right -> (x+1, y)
